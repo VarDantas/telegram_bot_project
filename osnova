@@ -1,0 +1,29 @@
+import telebot
+from telebot import types
+bot = telebot.TeleBot('6754798624:AAEBs3thP8PWbNfqD4OQuItcesM7NIW9r5Y')
+@bot.message_handler(commands=['start'])
+def main(message):
+    markup = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton('начать подготовку', callback_data='startstudy')
+    markup.row(btn1)
+    bot.reply_to(message, f'Привет, {message.from_user.first_name}! Нажми кнопку <начать подготовку> чтобы перейти к заданиям!', reply_markup=markup)
+
+@bot.callback_query_handler(func=lambda callback: True)
+def callback_message(callback):
+    if callback.data == 'startstudy':
+        markup = types.InlineKeyboardMarkup()
+        btn2 = types.InlineKeyboardButton('задания', callback_data='tasks')
+        btn3 = types.InlineKeyboardButton('теория', callback_data='theory')
+        markup.row(btn2, btn3)
+        bot.send_message(callback.message.chat.id, 'Перейди к заданиям или теории ->', reply_markup=markup)
+
+@bot.callback_query_handler(func=lambda callback: True)
+def callback_message(callback):
+    if callback.data == 'tasks':
+        markup = types.InlineKeyboardMarkup()
+        markup.add(types.InlineKeyboardButton('1 задание', callback_data='tasks1'))
+        bot.send_message(callback.message.chat.id, 'Выберете задание ->', reply_markup=markup)
+
+
+
+bot.polling(none_stop=True)
